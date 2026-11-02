@@ -1,0 +1,90 @@
+
+public class MaxwellSolver {
+    int n_region_x = 1900;
+    int n_region_y = 300;
+    double nearest_neighbor_x = 12;
+    double nearest_neighbor_y = 12;
+    double time_step = 1;
+    double mu0 = 4.0 * Math.PI * 1e-7;
+    double eps0 = 8.854e-12;
+
+    public MaxwellSolver(int nx, int ny, double dx, double dy, double dt) {
+        n_region_x = nx;
+        n_region_y = ny;
+        nearest_neighbor_x = dx;
+        nearest_neighbor_y = dy;
+        time_step = dt;
+    }
+
+    public MaxwellSolver(int[][] grid, double dx, double dy, double dt) {
+        n_region_x = grid.length;
+        n_region_y = grid[0].length;
+        nearest_neighbor_x = dx;
+        nearest_neighbor_y = dy;
+        time_step = dt;
+    }
+
+    public void updateMagnetic(double[][] e_field, double[][] mx_field, double[][] my_field){
+        
+        for (int i = 0; i < n_region_x; i++) {
+            for (int j = 0; j < n_region_y - 1; j++) {
+                mx_field[i][j] -= time_step / (mu0 * nearest_neighbor_y)
+                        * (e_field[i][j + 1] - e_field[i][j]);
+            }
+        }
+
+        for (int i = 0; i < n_region_x - 1; i++) {
+            for (int j = 0; j < n_region_y; j++) {
+                my_field[i][j] += time_step / (mu0 * nearest_neighbor_x)
+                        * (e_field[i + 1][j] - e_field[i][j]);
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /*for (int i = 0; i < n_region_x - 1; i++) {
+            for (int j = 0; j < n_region_y - 1; j++) {
+                
+                mx_field[i][j] -= time_step / (mu0 * nearest_neighbor_y)
+                    * (e_field[i][j + 1] - e_field[i][j]);
+
+            my_field[i][j] += time_step / (mu0 * nearest_neighbor_x)
+                    * (e_field[i + 1][j] - e_field[i][j]);
+                /*mx_field[i][j] -= faradayLaw(i, j, n_region_y, e_field);
+
+                my_field[i][j] += faradayLaw(i, j, n_region_x, e_field);
+            }
+        }*/
+    }
+
+    public void updateElectric(double[][] e_field, double[][] mx_field, double[][] my_field, MaterialGrid materialGrid){
+        for (int i = 1; i < n_region_x - 1; i++) {
+            for (int j = 1; j < n_region_y - 1; j++) {
+                int id = materialGrid.getMaterial(i, j);
+                double epsilon = eps0 * MaterialProperties.getRelativePermittivity(id);
+                e_field[i][j] += ampereMaxwellLaw(i, j, epsilon, mx_field, my_field);
+            }
+        }
+    }
+
+    public double faradayLaw(int i, int j, int n_region, double[][] e_field){
+        return time_step / (mu0 * n_region) * (e_field[i][j + 1] - e_field[i][j]);
+
+    }
+    public double ampereMaxwellLaw(int i, int j, double epsilon, double[][] mx_field, double[][] my_field){
+        return time_step / epsilon * ((my_field[i][j] - my_field[i - 1][j]) / nearest_neighbor_x 
+                - (mx_field[i][j] - mx_field[i][j - 1]) / nearest_neighbor_y);
+    }
+}
