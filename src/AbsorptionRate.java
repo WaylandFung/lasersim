@@ -10,9 +10,9 @@ public class AbsorptionRate {
         return level * photonEnergyEV;
     }
 
-    public double getRate(int level, double electricField) {
+    public static double getRate(int level, double electricField) {
 
-        double electronEnergy = getElectronEnergy(level);
+        //double electronEnergy = getElectronEnergy(level);
 
         // Placeholder until the physical rate law is established.
         return 1e12;

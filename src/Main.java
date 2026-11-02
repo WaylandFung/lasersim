@@ -69,11 +69,11 @@ public class Main {
         BoundaryConditions boundaries =
                 new BoundaryConditions();
 
-        double absorptionRate = AbsorptionRate.getRate(0);
+        double absorptionRate = AbsorptionRate.getRate(0, 0);
 
         // Source location (temporary test position)
         int sourceX = nx / 2;
-        int sourceY = ny / 2;
+        int sourceY = ny-50;
 
         double time = 0.0;
         int totalSteps = 1000;
@@ -255,13 +255,13 @@ System.out.println("Number of levels: "
 
                 tracker.reset();
             }
-            /*if (n % 20 == 0) {
+            if (n % 20 == 0) {
                 String filename = String.format(
                     "frames/frame_%05d.png", n / 20
                 );
 
                 FieldVisualizer.saveEz(Ez, materialGrid, filename);
-            }*/
+            }
         }
 
         System.out.println("Simulation finished.");
